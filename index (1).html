@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>음악 기호·용어 학습카드 & 퀴즈</title>
+  <style>
+    :root{
+      --bg:#fff7fb;
+      --panel:#ffffff;
+      --ink:#172033;
+      --muted:#6b7280;
+      --line:#e8e1ea;
+      --pink:#ffd6e7;
+      --blue:#35a6de;
+      --blue2:#258bc0;
+      --green:#7fc866;
+      --yellow:#ffd966;
+      --red:#ff6b73;
+      --shadow: 0 16px 40px rgba(38, 45, 65, .12);
+      --radius: 24px;
+    }
+    *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+    html, body{ margin:0; min-height:100%; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; background: radial-gradient(circle at 10% 0%, #ffe6f0, transparent 35%), var(--bg); color:var(--ink); }
+    body{ overflow-x:hidden; }
+    button, input, select, textarea{ font:inherit; }
+    button{ border:0; cursor:pointer; }
+    .app{ width:min(1180px, 100%); margin:0 auto; padding:18px; }
+    .topbar{ display:flex; align-items:center; justify-content:space-between; gap:14px; padding:16px 6px 14px; }
+    .brand{ display:flex; align-items:center; gap:12px; min-width:0; }
+    .brandIcon{ width:52px; height:52px; border-radius:18px; background:linear-gradient(135deg, var(--pink), #fff 60%, #daf2ff); display:grid; place-items:center; box-shadow:var(--shadow); font-size:30px; }
+    h1{ margin:0; font-size:clamp(22px, 3vw, 36px); letter-spacing:-.04em; }
+    .subtitle{ color:var(--muted); font-size:14px; margin-top:3px; }
+    .nav{ display:flex; flex-wrap:wrap; gap:8px; justify-content:flex-end; }
+    .tab{ padding:11px 14px; border-radius:999px; background:#fff; border:1px solid var(--line); color:#334155; box-shadow:0 4px 14px rgba(0,0,0,.04); }
+    .tab.active{ background:var(--blue); color:white; border-color:transparent; font-weight:800; }
+    .screen{ display:none; }
+    .screen.active{ display:block; animation:fade .18s ease-out; }
+    @keyframes fade{ from{opacity:.4; transform:translateY(4px);} to{opacity:1; transform:none;} }
+    .hero{ background:linear-gradient(135deg, rgba(255,255,255,.92), rgba(255,244,250,.96)); border:1px solid rgba(255,255,255,.8); border-radius:var(--radius); padding:24px; box-shadow:var(--shadow); display:grid; grid-template-columns: 1.1fr .9fr; gap:20px; align-items:center; }
+    .hero h2{ font-size:clamp(28px, 4vw, 54px); line-height:1.04; margin:0 0 14px; letter-spacing:-.055em; }
+    .hero p{ color:#475569; line-height:1.7; margin:0 0 18px; font-size:16px; }
+    .heroActions{ display:flex; gap:10px; flex-wrap:wrap; }
+    .primary, .secondary, .danger, .success{ padding:13px 18px; border-radius:16px; font-weight:800; box-shadow:0 8px 22px rgba(0,0,0,.09); }
+    .primary{ background:var(--blue); color:white; }
+    .secondary{ background:white; border:1px solid var(--line); color:#1f2937; }
+    .success{ background:var(--green); color:white; }
+    .danger{ background:var(--red); color:white; }
+    .miniBtn{ padding:8px 11px; border-radius:12px; background:#f6f8fb; border:1px solid var(--line); color:#334155; font-size:13px; font-weight:750; }
+    .previewDeck{ min-height:290px; position:relative; display:grid; place-items:center; }
+    .miniCard{ position:absolute; width:150px; height:105px; border-radius:16px; background:#fff; box-shadow:0 14px 30px rgba(38,45,65,.13); border:1px solid #eef0f3; display:grid; place-items:center; transform:rotate(var(--r)) translate(var(--x), var(--y)); overflow:hidden; }
+    .miniCard::after{ content:""; position:absolute; left:0; right:0; bottom:0; height:12px; background:var(--c); }
+    .miniCard span{ font-family: Georgia, "Times New Roman", serif; font-weight:800; font-size:52px; }
+    .miniCard svg{ width:85%; height:72%; }
+    .panel{ background:rgba(255,255,255,.95); border:1px solid rgba(232,225,234,.9); border-radius:var(--radius); box-shadow:var(--shadow); padding:20px; }
+    .controls{ display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap; margin-bottom:14px; }
+    .controlsLeft, .controlsRight{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+    .select, .search{ background:#fff; border:1px solid var(--line); border-radius:14px; padding:11px 12px; min-height:44px; }
+    .search{ min-width:min(100%, 260px); }
+    .countBadge{ font-size:13px; padding:8px 11px; border-radius:999px; background:#eff8ff; color:#126693; font-weight:800; }
+    .learnLayout{ display:grid; grid-template-columns: minmax(280px, 1fr) 320px; gap:18px; align-items:start; }
+    .flashcard{ min-height:440px; background:#fff; border-radius:26px; border:1px solid #edf0f5; overflow:hidden; box-shadow:0 18px 42px rgba(0,0,0,.11); display:flex; flex-direction:column; cursor:pointer; user-select:none; position:relative; }
+    .cardTopLine{ height:18px; background:linear-gradient(90deg, var(--blue), #a8e4ff); }
+    .cardBody{ flex:1; display:grid; place-items:center; padding:32px 24px; text-align:center; }
+    .symbolWrap{ width:100%; min-height:220px; display:grid; place-items:center; }
+    .symbolText{ font-family: Georgia, "Times New Roman", "Noto Serif", serif; font-weight:800; font-style:italic; font-size:clamp(72px, 14vw, 150px); line-height:1; letter-spacing:-.06em; }
+    .symbolUnicode{ font-family:"Noto Music", "Bravura", "Segoe UI Symbol", "Apple Symbols", "Noto Sans Symbols 2", serif; font-size:clamp(86px, 15vw, 160px); line-height:1; }
+    .termText{ font-size:clamp(34px, 6vw, 68px); letter-spacing:-.06em; font-weight:900; margin:0; }
+    .meaningText{ font-size:clamp(18px, 2vw, 26px); color:#475569; margin:14px 0 0; line-height:1.5; }
+    .categoryPill{ position:absolute; top:30px; left:18px; padding:8px 11px; border-radius:999px; background:#f0f9ff; color:#0369a1; font-size:13px; font-weight:900; }
+    .flipHint{ position:absolute; bottom:18px; left:0; right:0; text-align:center; color:#94a3b8; font-size:13px; font-weight:750; }
+    .sideList{ max-height:455px; overflow:auto; padding-right:4px; }
+    .listItem{ display:grid; grid-template-columns: 52px 1fr; gap:10px; align-items:center; padding:10px; border-radius:16px; border:1px solid transparent; cursor:pointer; }
+    .listItem:hover, .listItem.active{ background:#f8fbff; border-color:#d8ecff; }
+    .listSym{ width:52px; height:44px; border-radius:12px; background:#fff; border:1px solid #e5e7eb; display:grid; place-items:center; overflow:hidden; }
+    .listSym .symbolText{ font-size:28px; }
+    .listSym .symbolUnicode{ font-size:31px; }
+    .listItem strong{ display:block; font-size:15px; }
+    .listItem small{ display:block; color:#64748b; margin-top:1px; }
+    .cardNav{ display:flex; justify-content:center; gap:10px; margin-top:14px; }
+    .quizHeader{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+    .progressOuter{ height:14px; background:#eef2f7; border-radius:999px; overflow:hidden; width:min(100%, 520px); }
+    .progressInner{ height:100%; width:0%; background:linear-gradient(90deg, var(--blue), var(--green)); border-radius:999px; transition:width .25s; }
+    .quizBox{ display:grid; grid-template-columns: 1fr 1fr; gap:18px; align-items:stretch; }
+    .quizSymbol{ min-height:390px; background:#fff; border-radius:28px; border:1px solid #edf0f5; display:grid; place-items:center; padding:24px; box-shadow: inset 0 -18px 0 rgba(53,166,222,.15), 0 12px 28px rgba(0,0,0,.06); }
+    .choices{ display:grid; gap:14px; align-content:center; }
+    .choice{ min-height:74px; border-radius:20px; border:2px solid #e8eef5; background:#fff; padding:16px; text-align:left; font-size:22px; font-weight:900; color:#1e293b; box-shadow:0 8px 18px rgba(0,0,0,.05); display:flex; align-items:center; gap:12px; }
+    .choice:hover{ border-color:#b8e1ff; transform:translateY(-1px); }
+    .choiceNumber{ width:38px; height:38px; border-radius:12px; background:#f1f7fc; color:#1d76a8; display:grid; place-items:center; font-weight:900; flex:0 0 auto; }
+    .feedback{ min-height:44px; margin-top:14px; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:900; border-radius:16px; }
+    .feedback.good{ color:#166534; background:#dcfce7; }
+    .feedback.bad{ color:#b91c1c; background:#fee2e2; }
+    .resultBox{ text-align:center; padding:44px 18px; }
+    .resultBox h3{ font-size:44px; margin:0 0 10px; letter-spacing:-.05em; }
+    .speedScreen{ position:relative; min-height:calc(100vh - 132px); background:#fff; border-radius:30px; box-shadow:var(--shadow); overflow:hidden; border:1px solid #edf0f5; display:grid; grid-template-rows:auto 1fr auto; }
+    .speedTop{ display:flex; justify-content:space-between; align-items:center; gap:12px; padding:14px 18px; border-bottom:1px solid #eef2f7; background:#fffafd; }
+    .speedCenter{ position:relative; display:grid; place-items:center; padding:28px; min-height:520px; }
+    .speedSymbolOnly{ width:100%; min-height:320px; display:grid; place-items:center; }
+    .tapZone{ position:absolute; top:0; bottom:0; width:22%; display:grid; place-items:center; color:rgba(15,23,42,.18); font-size:clamp(54px, 9vw, 120px); font-weight:900; user-select:none; }
+    .tapZone.left{ left:0; }
+    .tapZone.right{ right:0; }
+    .tapZone:hover{ background:rgba(53,166,222,.06); color:rgba(53,166,222,.38); }
+    .speedBottom{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 18px; border-top:1px solid #eef2f7; color:#64748b; flex-wrap:wrap; }
+    .answerPanel{ position:absolute; bottom:84px; left:50%; transform:translateX(-50%); background:rgba(15,23,42,.88); color:white; padding:14px 18px; border-radius:18px; text-align:center; min-width:260px; display:none; box-shadow:0 20px 60px rgba(0,0,0,.22); }
+    .answerPanel.show{ display:block; animation:fade .15s ease; }
+    .answerPanel strong{ font-size:26px; display:block; }
+    .gridCards{ display:grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap:12px; }
+    .printCard{ aspect-ratio: 1.42 / 1; background:#fff; border:1px solid #e5e7eb; border-radius:16px; overflow:hidden; display:grid; grid-template-rows: 1fr auto; box-shadow:0 8px 16px rgba(0,0,0,.05); }
+    .printCard .symbolWrap{ min-height:auto; padding:12px; }
+    .printCard .symbolText{ font-size:46px; }
+    .printCard .symbolUnicode{ font-size:52px; }
+    .printLabel{ border-top:8px solid var(--green); padding:9px 10px; font-size:13px; display:flex; justify-content:space-between; gap:8px; }
+    .printLabel b{ white-space:nowrap; }
+    .printLabel span{ color:#64748b; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .staff{ width:min(100%, 430px); height:auto; }
+    .staff line{ stroke:#111827; stroke-width:3; }
+    .staff .thin{ stroke-width:2; }
+    .staff text{ font-family: Georgia, "Times New Roman", serif; fill:#111827; font-weight:700; }
+    .symbolSmall svg{ width:100%; max-height:42px; }
+    .symbolSmall .staff{ max-width:48px; }
+    .hidden{ display:none !important; }
+    .teacherBox{ background:#f8fafc; border:1px dashed #cbd5e1; border-radius:18px; padding:14px; margin-top:14px; }
+    .teacherBox summary{ cursor:pointer; font-weight:900; color:#334155; }
+    .teacherBox p{ color:#64748b; line-height:1.65; margin:10px 0 0; }
+
+    @media (max-width: 860px){
+      .topbar{ align-items:flex-start; flex-direction:column; }
+      .nav{ justify-content:flex-start; }
+      .hero, .learnLayout, .quizBox{ grid-template-columns:1fr; }
+      .previewDeck{ display:none; }
+      .flashcard{ min-height:380px; }
+      .sideList{ max-height:290px; }
+      .quizSymbol{ min-height:300px; }
+      .speedCenter{ min-height:420px; }
+      .tapZone{ width:26%; }
+    }
+    @media (max-width: 520px){
+      .app{ padding:10px; }
+      .topbar{ padding-top:10px; }
+      .tab{ flex:1 1 calc(50% - 6px); text-align:center; padding:10px 8px; }
+      .panel, .hero{ padding:14px; border-radius:20px; }
+      .controls{ align-items:stretch; }
+      .controlsLeft, .controlsRight{ width:100%; }
+      .select, .search{ width:100%; }
+      .choice{ font-size:18px; min-height:64px; }
+      .speedScreen{ border-radius:20px; min-height:calc(100vh - 110px); }
+      .speedTop, .speedBottom{ padding:10px; }
+    }
+    @media print{
+      body{ background:white; }
+      .topbar, .screen:not(#printScreen), .controls, .teacherBox{ display:none !important; }
+      #printScreen{ display:block !important; }
+      .app{ width:100%; padding:0; }
+      .panel{ box-shadow:none; border:0; padding:0; }
+      .gridCards{ grid-template-columns: repeat(3, 1fr); gap:8mm; }
+      .printCard{ break-inside:avoid; box-shadow:none; border-radius:4mm; }
+      @page{ size:A4; margin:10mm; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brandIcon">♪</div>
+        <div>
+          <h1>음악 기호·용어 학습카드</h1>
+          <div class="subtitle">학습카드 · 3지선다 퀴즈 · 스피드 퀴즈 · 인쇄용 카드</div>
+        </div>
+      </div>
+      <nav class="nav" aria-label="주요 기능">
+        <button class="tab active" data-screen="homeScreen">처음</button>
+        <button class="tab" data-screen="learnScreen">학습카드</button>
+        <button class="tab" data-screen="quizScreen">10문항 퀴즈</button>
+        <button class="tab" data-screen="speedScreenWrap">스피드 퀴즈</button>
+        <button class="tab" data-screen="printScreen">인쇄용</button>
+      </nav>
+    </header>
+
+    <main>
+      <section id="homeScreen" class="screen active">
+        <div class="hero">
+          <div>
+            <h2>기호를 보고,<br/>이름과 뜻을 맞히는<br/>음악 카드 프로그램</h2>
+            <p>초등학생이 컴퓨터·태블릿·스마트폰에서 음악 기호와 용어를 익힐 수 있도록 만든 단일 HTML 프로그램입니다. 카드는 넘기며 학습하고, 퀴즈는 10문항씩 3지선다로 진행됩니다. 스피드 퀴즈는 교실 앞 화면에 기호만 크게 띄워 말로 답하게 할 수 있습니다.</p>
+            <div class="heroActions">
+              <button class="primary" onclick="showScreen('learnScreen')">학습카드 시작</button>
+              <button class="success" onclick="showScreen('quizScreen'); startQuiz();">10문항 퀴즈 시작</button>
+              <button class="secondary" onclick="showScreen('speedScreenWrap')">스피드 퀴즈</button>
+            </div>
+          </div>
+          <div class="previewDeck" aria-hidden="true">
+            <div class="miniCard" style="--r:-13deg;--x:-85px;--y:-70px;--c:#35a6de"><span>pp</span></div>
+            <div class="miniCard" style="--r:9deg;--x:70px;--y:-65px;--c:#7fc866"><span>♯</span></div>
+            <div class="miniCard" style="--r:-3deg;--x:-10px;--y:35px;--c:#ff6b73"><span>D.C.</span></div>
+            <div class="miniCard" style="--r:14deg;--x:88px;--y:70px;--c:#35a6de"><span>𝄋</span></div>
+            <div class="miniCard" style="--r:-18deg;--x:-105px;--y:72px;--c:#7fc866"><span>f</span></div>
+          </div>
+        </div>
+
+        <details class="teacherBox">
+          <summary>수업 운영 아이디어</summary>
+          <p>① 학습카드 모드에서 교사가 기호를 보여주고 학생이 이름을 말하게 합니다. ② 10문항 퀴즈는 개인·짝 활동으로 사용합니다. ③ 스피드 퀴즈는 전자칠판·빔프로젝터에 띄우고 모둠별 릴레이 답하기로 운영하면 좋습니다. 화면 오른쪽 끝을 누르면 다음 문제, 왼쪽 끝을 누르면 이전 문제로 이동합니다.</p>
+        </details>
+      </section>
+
+      <section id="learnScreen" class="screen">
+        <div class="panel">
+          <div class="controls">
+            <div class="controlsLeft">
+              <select id="categoryFilter" class="select" aria-label="분류 선택"></select>
+              <input id="searchInput" class="search" placeholder="기호·용어 검색" />
+              <span id="cardCount" class="countBadge"></span>
+            </div>
+            <div class="controlsRight">
+              <button class="miniBtn" onclick="shuffleLearning()">섞기</button>
+              <button class="miniBtn" onclick="resetLearning()">처음으로</button>
+            </div>
+          </div>
+          <div class="learnLayout">
+            <div>
+              <article id="flashcard" class="flashcard" onclick="flipCard()" aria-live="polite">
+                <div class="cardTopLine"></div>
+                <div id="categoryPill" class="categoryPill"></div>
+                <div id="cardBody" class="cardBody"></div>
+                <div class="flipHint">카드를 누르면 앞면/뒷면이 바뀝니다</div>
+              </article>
+              <div class="cardNav">
+                <button class="secondary" onclick="event.stopPropagation(); prevCard();">← 이전</button>
+                <button class="primary" onclick="event.stopPropagation(); nextCard();">다음 →</button>
+              </div>
+            </div>
+            <aside>
+              <div id="cardList" class="sideList"></div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section id="quizScreen" class="screen">
+        <div class="panel">
+          <div class="quizHeader">
+            <div>
+              <strong id="quizTitle">10문항 퀴즈</strong>
+              <span id="quizMeta" class="countBadge"></span>
+            </div>
+            <div class="progressOuter" aria-label="진행률"><div id="progressInner" class="progressInner"></div></div>
+            <button class="miniBtn" onclick="startQuiz()">새 문제 세트</button>
+          </div>
+          <div id="quizContent"></div>
+        </div>
+      </section>
+
+      <section id="speedScreenWrap" class="screen">
+        <div class="speedScreen" id="speedFull">
+          <div class="speedTop">
+            <div><b>스피드 퀴즈</b> <span id="speedMeta" class="countBadge"></span></div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
+              <button class="miniBtn" onclick="shuffleSpeed()">섞기</button>
+              <button class="miniBtn" onclick="toggleSpeedAnswer()">정답 보기</button>
+              <button class="miniBtn" onclick="goFullscreen()">전체화면</button>
+            </div>
+          </div>
+          <div class="speedCenter">
+            <button class="tapZone left" onclick="prevSpeed()" aria-label="이전 문제">‹</button>
+            <div id="speedSymbol" class="speedSymbolOnly"></div>
+            <button class="tapZone right" onclick="nextSpeed()" aria-label="다음 문제">›</button>
+            <div id="answerPanel" class="answerPanel"></div>
+          </div>
+          <div class="speedBottom">
+            <span>왼쪽 끝: 이전 문제 · 오른쪽 끝: 다음 문제 · 키보드 ← → 가능</span>
+            <span id="speedCategory"></span>
+          </div>
+        </div>
+      </section>
+
+      <section id="printScreen" class="screen">
+        <div class="panel">
+          <div class="controls">
+            <div>
+              <h2 style="margin:0; letter-spacing:-.04em;">인쇄용 카드</h2>
+              <div class="subtitle">A4 인쇄 시 3열 카드로 출력됩니다.</div>
+            </div>
+            <button class="primary" onclick="window.print()">인쇄하기</button>
+          </div>
+          <div id="printGrid" class="gridCards"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const svg = {
+      crescendo:`<svg class="staff" viewBox="0 0 420 220" role="img" aria-label="크레셴도"><line x1="42" y1="82" x2="375" y2="34"/><line x1="42" y1="138" x2="375" y2="186"/></svg>`,
+      decrescendo:`<svg class="staff" viewBox="0 0 420 220" role="img" aria-label="데크레셴도"><line x1="42" y1="34" x2="375" y2="82"/><line x1="42" y1="186" x2="375" y2="138"/></svg>`,
+      tie:`<svg class="staff" viewBox="0 0 420 220" role="img" aria-label="붙임줄"><line x1="50" y1="58" x2="370" y2="58"/><line x1="50" y1="88" x2="370" y2="88"/><line x1="50" y1="118" x2="370" y2="118"/><line x1="50" y1="148" x2="370" y2="148"/><line x1="50" y1="178" x2="370" y2="178"/><path d="M138 88 C166 150, 254 150, 282 88" fill="none" stroke="#111827" stroke-width="7" stroke-linecap="round"/><ellipse cx="135" cy="118" rx="18" ry="13" transform="rotate(-20 135 118)" fill="#111827"/><line x1="153" y1="112" x2="153" y2="48" stroke="#111827" stroke-width="7"/><ellipse cx="286" cy="118" rx="18" ry="13" transform="rotate(-20 286 118)" fill="#111827"/><line x1="304" y1="112" x2="304" y2="48" stroke="#111827" stroke-width="7"/></svg>`,
+      slur:`<svg class="staff" viewBox="0 0 420 220" role="img" aria-label="이음줄"><line x1="50" y1="58" x2="370" y2="58"/><line x1="50" y1="88" x2="370" y2="88"/><line x1="50" y1="118" x2="370" y2="118"/><line x1="50" y1="148" x2="370" y2="148"/><line x1="50" y1="178" x2="370" y2="178"/><path d="M98 72 C155 12, 272 12, 322 72" fill="none" stroke="#111827" stroke-width="7" stroke-linecap="round"/><ellipse cx="105" cy="138" rx="18" ry="13" transform="rotate(-20 105 138)" fill="#111827"/><line x1="123" y1="132" x2="123" y2="68" stroke="#111827" stroke-width="7"/><ellipse cx="210" cy="118" rx="18" ry="13" transform="rotate(-20 210 118)" fill="#111827"/><line x1="228" y1="112" x2="228" y2="48" stroke="#111827" stroke-width="7"/><ellipse cx="318" cy="138" rx="18" ry="13" transform="rotate(-20 318 138)" fill="#111827"/><line x1="336" y1="132" x2="336" y2="68" stroke="#111827" stroke-width="7"/></svg>`,
+      staccato:`<svg class="staff" viewBox="0 0 420 220" role="img" aria-label="스타카토"><line x1="80" y1="58" x2="340" y2="58"/><line x1="80" y1="88" x2="340" y2="88"/><line x1="80" y1="118" x2="340" y2="118"/><line x1="80" y1="148" x2="340" y2="148"/><line x1="80" y1="178" x2="340" y2="178"/><ellipse cx="210" cy="118" rx="23" ry="16" transform="rotate(-20 210 118)" fill="#111827"/><line x1="232" y1="111" x2="232" y2="39" stroke="#111827" stroke-width="8"/><circle cx="210" cy="78" r="7" fill="#111827"/></svg>`,
+      repeat:`<svg class="staff" viewBox="0 0 420 220" role="img" aria-label="도돌이표"><line x1="80" y1="58" x2="340" y2="58"/><line x1="80" y1="88" x2="340" y2="88"/><line x1="80" y1="118" x2="340" y2="118"/><line x1="80" y1="148" x2="340" y2="148"/><line x1="80" y1="178" x2="340" y2="178"/><line x1="132" y1="58" x2="132" y2="178" stroke="#111827" stroke-width="6"/><line x1="148" y1="58" x2="148" y2="178" stroke="#111827" stroke-width="12"/><circle cx="178" cy="93" r="9" fill="#111827"/><circle cx="178" cy="143" r="9" fill="#111827"/><line x1="288" y1="58" x2="288" y2="178" stroke="#111827" stroke-width="12"/><line x1="304" y1="58" x2="304" y2="178" stroke="#111827" stroke-width="6"/><circle cx="258" cy="93" r="9" fill="#111827"/><circle cx="258" cy="143" r="9" fill="#111827"/></svg>`,
+      firstEnding:`<svg class="staff" viewBox="0 0 420 220" role="img" aria-label="1번 괄호"><line x1="80" y1="58" x2="340" y2="58"/><line x1="80" y1="88" x2="340" y2="88"/><line x1="80" y1="118" x2="340" y2="118"/><line x1="80" y1="148" x2="340" y2="148"/><line x1="80" y1="178" x2="340" y2="178"/><path d="M108 34 H300 M108 34 V72" fill="none" stroke="#111827" stroke-width="6"/><text x="124" y="60" font-size="42">1.</text></svg>`,
+      secondEnding:`<svg class="staff" viewBox="0 0 420 220" role="img" aria-label="2번 괄호"><line x1="80" y1="58" x2="340" y2="58"/><line x1="80" y1="88" x2="340" y2="88"/><line x1="80" y1="118" x2="340" y2="118"/><line x1="80" y1="148" x2="340" y2="148"/><line x1="80" y1="178" x2="340" y2="178"/><path d="M108 34 H300 M108 34 V72" fill="none" stroke="#111827" stroke-width="6"/><text x="124" y="60" font-size="42">2.</text></svg>`,
+      fermata:`<svg class="staff" viewBox="0 0 420 220" role="img" aria-label="늘임표"><path d="M118 128 C124 70, 296 70, 302 128" fill="none" stroke="#111827" stroke-width="12" stroke-linecap="round"/><circle cx="210" cy="128" r="16" fill="#111827"/></svg>`,
+      breath:`<svg class="staff" viewBox="0 0 420 220" role="img" aria-label="숨표"><text x="165" y="132" font-size="116" font-style="italic">,</text></svg>`,
+      staffNote:`<svg class="staff" viewBox="0 0 420 220" role="img" aria-label="음표"><line x1="80" y1="58" x2="340" y2="58"/><line x1="80" y1="88" x2="340" y2="88"/><line x1="80" y1="118" x2="340" y2="118"/><line x1="80" y1="148" x2="340" y2="148"/><line x1="80" y1="178" x2="340" y2="178"/><ellipse cx="210" cy="148" rx="24" ry="16" transform="rotate(-20 210 148)" fill="#111827"/><line x1="234" y1="140" x2="234" y2="50" stroke="#111827" stroke-width="8"/></svg>`
+    };
+
+    const cards = [
+      {id:'pp', category:'셈여림', term:'피아니시모', display:'pp', kind:'text', meaning:'매우 여리게 연주합니다.'},
+      {id:'p', category:'셈여림', term:'피아노', display:'p', kind:'text', meaning:'여리게 연주합니다.'},
+      {id:'mp', category:'셈여림', term:'메조피아노', display:'mp', kind:'text', meaning:'조금 여리게 연주합니다.'},
+      {id:'mf', category:'셈여림', term:'메조포르테', display:'mf', kind:'text', meaning:'조금 세게 연주합니다.'},
+      {id:'f', category:'셈여림', term:'포르테', display:'f', kind:'text', meaning:'세게 연주합니다.'},
+      {id:'ff', category:'셈여림', term:'포르티시모', display:'ff', kind:'text', meaning:'매우 세게 연주합니다.'},
+      {id:'crescendo', category:'셈여림', term:'크레셴도', display:'crescendo', kind:'svg', meaning:'점점 세게 연주합니다.'},
+      {id:'decrescendo', category:'셈여림', term:'데크레셴도', display:'decrescendo', kind:'svg', meaning:'점점 여리게 연주합니다.'},
+      {id:'sharp', category:'높낮이', term:'올림표', display:'♯', kind:'unicode', meaning:'그 음을 반음 올립니다.'},
+      {id:'flat', category:'높낮이', term:'내림표', display:'♭', kind:'unicode', meaning:'그 음을 반음 내립니다.'},
+      {id:'natural', category:'높낮이', term:'제자리표', display:'♮', kind:'unicode', meaning:'올리거나 내린 음을 원래 높이로 되돌립니다.'},
+      {id:'doubleSharp', category:'높낮이', term:'겹올림표', display:'𝄪', kind:'unicode', meaning:'그 음을 반음 두 번, 즉 온음 올립니다.'},
+      {id:'doubleFlat', category:'높낮이', term:'겹내림표', display:'𝄫', kind:'unicode', meaning:'그 음을 반음 두 번, 즉 온음 내립니다.'},
+      {id:'treble', category:'자리표', term:'높은음자리표', display:'𝄞', kind:'unicode', meaning:'높은 소리의 위치를 알려주는 자리표입니다.'},
+      {id:'bass', category:'자리표', term:'낮은음자리표', display:'𝄢', kind:'unicode', meaning:'낮은 소리의 위치를 알려주는 자리표입니다.'},
+      {id:'tie', category:'연주법', term:'붙임줄', display:'tie', kind:'svg', meaning:'높이가 같은 두 음을 끊지 않고 이어서 냅니다.'},
+      {id:'slur', category:'연주법', term:'이음줄', display:'slur', kind:'svg', meaning:'여러 음을 부드럽게 이어서 연주합니다.'},
+      {id:'staccato', category:'연주법', term:'스타카토', display:'staccato', kind:'svg', meaning:'음을 짧게 끊어서 연주합니다.'},
+      {id:'fermata', category:'연주법', term:'늘임표', display:'fermata', kind:'svg', meaning:'음을 조금 더 길게 늘여 연주합니다.'},
+      {id:'rit', category:'빠르기', term:'리타르단도', display:'rit.', kind:'text', meaning:'점점 느리게 연주합니다.'},
+      {id:'aTempo', category:'빠르기', term:'아 템포', display:'a tempo', kind:'text', meaning:'본래의 빠르기로 돌아갑니다.'},
+      {id:'daCapo', category:'반복', term:'다 카포', display:'D.C.', kind:'text', meaning:'처음으로 돌아가서 연주합니다.'},
+      {id:'dalSegno', category:'반복', term:'달 세뇨', display:'D.S.', kind:'text', meaning:'세뇨 표시가 있는 곳으로 돌아갑니다.'},
+      {id:'segno', category:'반복', term:'세뇨', display:'𝄋', kind:'unicode', meaning:'D.S.에서 돌아가는 위치를 나타냅니다.'},
+      {id:'coda', category:'반복', term:'코다', display:'𝄌', kind:'unicode', meaning:'곡의 끝부분으로 건너뛰는 표시입니다.'},
+      {id:'fine', category:'반복', term:'피네', display:'Fine', kind:'text', meaning:'곡을 끝내라는 표시입니다.'},
+      {id:'repeat', category:'반복', term:'도돌이표', display:'repeat', kind:'svg', meaning:'정해진 구간을 다시 반복합니다.'},
+      {id:'firstEnding', category:'반복', term:'1번 괄호', display:'firstEnding', kind:'svg', meaning:'첫 번째 반복 때 연주하는 부분입니다.'},
+      {id:'secondEnding', category:'반복', term:'2번 괄호', display:'secondEnding', kind:'svg', meaning:'두 번째 반복 때 연주하는 부분입니다.'},
+      {id:'breath', category:'연주법', term:'숨표', display:'breath', kind:'svg', meaning:'노래나 연주 중 잠깐 숨을 쉽니다.'},
+      {id:'note', category:'기본기호', term:'음표', display:'staffNote', kind:'svg', meaning:'소리의 길이와 높이를 나타냅니다.'},
+      {id:'quarterRest', category:'기본기호', term:'4분쉼표', display:'𝄽', kind:'unicode', meaning:'한 박을 쉽니다. 박자에 따라 길이는 달라질 수 있습니다.'},
+      {id:'eighthRest', category:'기본기호', term:'8분쉼표', display:'𝄾', kind:'unicode', meaning:'반 박을 쉽니다. 박자에 따라 길이는 달라질 수 있습니다.'},
+      {id:'barline', category:'기본기호', term:'마디선', display:'|', kind:'unicode', meaning:'마디와 마디를 나누는 선입니다.'},
+      {id:'doubleBar', category:'기본기호', term:'겹세로줄', display:'𝄂', kind:'unicode', meaning:'악곡의 끝이나 큰 구분을 나타냅니다.'}
+    ];
+
+    let filtered = [...cards];
+    let cardIndex = 0;
+    let flipped = false;
+    let quizSet = [];
+    let quizIndex = 0;
+    let score = 0;
+    let locked = false;
+    let speedList = [...cards];
+    let speedIndex = 0;
+    let answerVisible = false;
+
+    function symbolHTML(card, small=false){
+      const cls = small ? ' symbolSmall' : '';
+      if(card.kind === 'svg') return `<div class="symbolWrap${cls}">${svg[card.display] || ''}</div>`;
+      if(card.kind === 'text') return `<div class="symbolWrap${cls}"><span class="symbolText">${card.display}</span></div>`;
+      return `<div class="symbolWrap${cls}"><span class="symbolUnicode">${card.display}</span></div>`;
+    }
+    function shuffle(arr){
+      const copy=[...arr];
+      for(let i=copy.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [copy[i],copy[j]]=[copy[j],copy[i]]; }
+      return copy;
+    }
+    function showScreen(id){
+      document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.screen===id));
+      if(id==='quizScreen' && quizSet.length===0) startQuiz();
+      if(id==='printScreen') renderPrintGrid();
+    }
+    document.querySelectorAll('.tab').forEach(tab=>tab.addEventListener('click',()=>showScreen(tab.dataset.screen)));
+
+    function initFilters(){
+      const cats = ['전체', ...Array.from(new Set(cards.map(c=>c.category)))];
+      const sel = document.getElementById('categoryFilter');
+      sel.innerHTML = cats.map(c=>`<option>${c}</option>`).join('');
+      sel.addEventListener('change', applyFilters);
+      document.getElementById('searchInput').addEventListener('input', applyFilters);
+    }
+    function applyFilters(){
+      const cat = document.getElementById('categoryFilter').value;
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      filtered = cards.filter(c => (cat==='전체' || c.category===cat) && (`${c.term} ${c.meaning} ${c.category} ${c.display}`.toLowerCase().includes(q)));
+      cardIndex = 0; flipped = false; renderCard(); renderList();
+    }
+    function renderCard(){
+      const body = document.getElementById('cardBody');
+      const pill = document.getElementById('categoryPill');
+      const count = document.getElementById('cardCount');
+      count.textContent = `${filtered.length}장`;
+      if(filtered.length===0){
+        pill.textContent = '검색 결과 없음';
+        body.innerHTML = `<div><p class="termText">카드가 없습니다</p><p class="meaningText">검색어를 바꿔 보세요.</p></div>`;
+        return;
+      }
+      const card = filtered[cardIndex];
+      pill.textContent = card.category;
+      if(!flipped){
+        body.innerHTML = symbolHTML(card) + `<div class="meaningText">이 기호의 이름은 무엇일까요?</div>`;
+      }else{
+        body.innerHTML = `<div><h2 class="termText">${card.term}</h2><p class="meaningText">${card.meaning}</p></div>`;
+      }
+      renderListActive();
+    }
+    function renderList(){
+      const list = document.getElementById('cardList');
+      list.innerHTML = filtered.map((c,i)=>`
+        <div class="listItem ${i===cardIndex?'active':''}" onclick="selectCard(${i})">
+          <div class="listSym">${symbolHTML(c, true)}</div>
+          <div><strong>${c.term}</strong><small>${c.category} · ${c.meaning}</small></div>
+        </div>`).join('');
+    }
+    function renderListActive(){
+      document.querySelectorAll('.listItem').forEach((el,i)=>el.classList.toggle('active', i===cardIndex));
+    }
+    function selectCard(i){ cardIndex=i; flipped=false; renderCard(); }
+    function flipCard(){ flipped=!flipped; renderCard(); }
+    function prevCard(){ if(!filtered.length) return; cardIndex=(cardIndex-1+filtered.length)%filtered.length; flipped=false; renderCard(); }
+    function nextCard(){ if(!filtered.length) return; cardIndex=(cardIndex+1)%filtered.length; flipped=false; renderCard(); }
+    function shuffleLearning(){ filtered=shuffle(filtered); cardIndex=0; flipped=false; renderCard(); renderList(); }
+    function resetLearning(){ document.getElementById('categoryFilter').value='전체'; document.getElementById('searchInput').value=''; filtered=[...cards]; cardIndex=0; flipped=false; renderCard(); renderList(); }
+
+    function startQuiz(){
+      quizSet = shuffle(cards).slice(0,10);
+      quizIndex = 0; score = 0; locked=false;
+      renderQuiz();
+    }
+    function getChoices(answer){
+      const wrong = shuffle(cards.filter(c=>c.id!==answer.id)).slice(0,2).map(c=>c.term);
+      return shuffle([answer.term, ...wrong]);
+    }
+    function renderQuiz(){
+      const meta = document.getElementById('quizMeta');
+      const progress = document.getElementById('progressInner');
+      const content = document.getElementById('quizContent');
+      if(quizIndex >= quizSet.length){
+        meta.textContent = `완료`;
+        progress.style.width = `100%`;
+        content.innerHTML = `<div class="resultBox"><h3>완료!</h3><p class="meaningText">점수: <b>${score}</b> / ${quizSet.length}</p><button class="primary" onclick="startQuiz()">새로운 10문항 시작</button></div>`;
+        return;
+      }
+      const q = quizSet[quizIndex];
+      meta.textContent = `${quizIndex+1} / ${quizSet.length} · 점수 ${score}`;
+      progress.style.width = `${(quizIndex/quizSet.length)*100}%`;
+      const choices = getChoices(q);
+      content.innerHTML = `
+        <div class="quizBox">
+          <div class="quizSymbol">${symbolHTML(q)}</div>
+          <div>
+            <div class="choices">
+              ${choices.map((ch,i)=>`<button class="choice" onclick="answerQuiz('${escapeForAttr(ch)}')"><span class="choiceNumber">${i+1}</span><span>${ch}</span></button>`).join('')}
+            </div>
+            <div id="feedback" class="feedback"></div>
+          </div>
+        </div>`;
+    }
+    function escapeForAttr(s){ return s.replace(/'/g, "&#39;"); }
+    function answerQuiz(ch){
+      if(locked) return;
+      const current = quizSet[quizIndex];
+      const feedback = document.getElementById('feedback');
+      if(ch === current.term){
+        locked = true;
+        score++;
+        feedback.className='feedback good';
+        feedback.textContent='정답입니다! 다음 문제로 넘어갑니다.';
+        setTimeout(()=>{ quizIndex++; locked=false; renderQuiz(); }, 700);
+      }else{
+        feedback.className='feedback bad';
+        feedback.textContent='다시 한번 생각해보세요.';
+      }
+    }
+
+    function renderSpeed(){
+      const card = speedList[speedIndex];
+      document.getElementById('speedMeta').textContent = `${speedIndex+1} / ${speedList.length}`;
+      document.getElementById('speedSymbol').innerHTML = symbolHTML(card);
+      document.getElementById('speedCategory').textContent = `${card.category}`;
+      const panel = document.getElementById('answerPanel');
+      panel.innerHTML = `<strong>${card.term}</strong><span>${card.meaning}</span>`;
+      panel.classList.toggle('show', answerVisible);
+    }
+    function nextSpeed(){ speedIndex=(speedIndex+1)%speedList.length; answerVisible=false; renderSpeed(); }
+    function prevSpeed(){ speedIndex=(speedIndex-1+speedList.length)%speedList.length; answerVisible=false; renderSpeed(); }
+    function shuffleSpeed(){ speedList=shuffle(speedList); speedIndex=0; answerVisible=false; renderSpeed(); }
+    function toggleSpeedAnswer(){ answerVisible=!answerVisible; renderSpeed(); }
+    function goFullscreen(){
+      const el = document.getElementById('speedFull');
+      if(!document.fullscreenElement && el.requestFullscreen) el.requestFullscreen();
+      else if(document.exitFullscreen) document.exitFullscreen();
+    }
+    window.addEventListener('keydown', e=>{
+      if(document.getElementById('speedScreenWrap').classList.contains('active')){
+        if(e.key==='ArrowRight') nextSpeed();
+        if(e.key==='ArrowLeft') prevSpeed();
+        if(e.key===' '){ e.preventDefault(); toggleSpeedAnswer(); }
+      }
+      if(document.getElementById('learnScreen').classList.contains('active')){
+        if(e.key==='ArrowRight') nextCard();
+        if(e.key==='ArrowLeft') prevCard();
+        if(e.key===' ') { e.preventDefault(); flipCard(); }
+      }
+    });
+
+    function renderPrintGrid(){
+      const grid = document.getElementById('printGrid');
+      grid.innerHTML = cards.map(c=>`
+        <div class="printCard">
+          ${symbolHTML(c, true)}
+          <div class="printLabel"><b>${c.term}</b><span>${c.meaning}</span></div>
+        </div>`).join('');
+    }
+
+    initFilters();
+    renderCard();
+    renderList();
+    renderQuiz();
+    renderSpeed();
+    renderPrintGrid();
+  </script>
+</body>
+</html>
